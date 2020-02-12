@@ -1,0 +1,126 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "clear": true
+            },
+            "windows" : {
+                "command": "powershell",
+                "args": [
+                    "-c",
+                    "make"
+                ],
+            },
+            "linux" : {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "make"
+                ],
+            }
+        },
+        {
+            "label": "build & run",
+            "type": "shell",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "clear": true
+            },
+            "windows" : {
+                "command": "powershell",
+                "args": [
+                    "-c",
+                    "make run"
+                ],
+            },
+            "linux" : {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "make run"
+                ],
+            }
+        },
+        {
+            "label": "clean",
+            "type": "shell",
+            "presentation": {
+                "clear": true
+            },
+            "windows" : {
+                "command": "powershell",
+                "args": [
+                    "-c",
+                    "make clean"
+                ],
+            },
+            "linux" : {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "make clean"
+                ],
+            }
+        },
+        {
+            "label": "rebuild",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "clear": true
+            },
+            "windows" : {
+                "command": "powershell",
+                "args": [
+                    "-c",
+                    "make clean ; make"
+                ],
+            },
+            "linux" : {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "make clean && make"
+                ],
+            }
+        },
+        {
+            "label": "rebuild & run",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "clear": true
+            },
+            "windows" : {
+                "command": "powershell",
+                "args": [
+                    "-c",
+                    "make clean ; make run"
+                ],
+            },
+            "linux" : {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "make clean && make run"
+                ],
+            }
+        },
+    ]
+}

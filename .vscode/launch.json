@@ -1,0 +1,64 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(CDB) Launch",
+            "type": "cdb",
+            "request": "launch",
+            "preLaunchTask": "rebuild",
+            "debugthedebugger": false,
+            "program": "${workspaceFolder}/bin/Windows/TemplatePolicyDemo.exe",
+            "args": "",
+            "initialbreak": true,
+            "workingdirectory": "${workspaceRoot}",
+            "sourcepath": "${workspaceRoot}/src;${workspaceRoot}/include"
+        },
+        {
+            "name": "(WinDbg) Launch",
+            "type": "windbg",
+            "request": "launch",
+            "preLaunchTask": "rebuild",
+            "target": "${workspaceFolder}/bin/Windows/TemplatePolicyDemo.exe",
+            "verbosity": "debug",
+            "windbgpath": "C:/Program Files (x86)/Windows Kits/10/Debuggers/x64/dbgeng.dll",
+            "workingDir": "${workspaceRoot}",
+            "sources": [ 
+                "${workspaceRoot}/src",
+                "${workspaceRoot}/include"
+                ]
+        },        
+        {
+            "name": "(Windows) Launch",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "externalConsole": false,
+            "preLaunchTask": "rebuild",
+            "program": "${workspaceFolder}/bin/Windows/TemplatePolicyDemo.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": []
+        },
+        {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/Linux/TemplatePolicyDemo",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "preLaunchTask": "rebuild",
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
