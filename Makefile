@@ -25,10 +25,14 @@ OUT_FILE := /Fe:
 SEP := \\
 EXECUTABLE	:= TemplatePolicyDemo.exe
 RM := del /f /s /q
+MKDIR := md
+CREATE_BIN_DIR := if not exist "$(BIN)" $(MKDIR) $(BIN)
+CREATE_BUILD_DIR := if not exist "$(BUILD)" $(MKDIR) $(BUILD)
 else
 SEP := /
 SYSTEM := Linux
 BIN := bin$(SEP)$(SYSTEM)$(SEP)
+BUILD := build$(SEP)$(SYSTEM)$(SEP)
 CC := g++
 C_FLAGS := -std=c++17 -Wall -Wextra -g
 L_FLAGS :=
@@ -39,6 +43,9 @@ INCLUDE_DIRS := -I$(INCLUDE)
 LIB_DIRS := -L$(LIB)
 EXECUTABLE := TemplatePolicyDemo
 RM := rm -rf
+MKDIR := mkdir
+CREATE_BIN_DIR := if [ ! -e "$(BIN)" ];then $(MKDIR) $(BIN); fi;
+CREATE_BUILD_DIR := if [ ! -e "$(BUILD)" ];then $(MKDIR) $(BUILD); fi;
 endif
 
 all: $(BIN)$(EXECUTABLE)
@@ -51,4 +58,6 @@ run: all
 	./$(BIN)$(EXECUTABLE)
 
 $(BIN)$(EXECUTABLE): $(SRC)/*.cpp
+	$(CREATE_BIN_DIR)
+	$(CREATE_BUILD_DIR)
 	$(CC) $(C_FLAGS) $(INCLUDE_DIRS)  $(L_FLAGS) $(L_LIBS) $^ $(OUT_FILE) $@ $(L_OPTS)

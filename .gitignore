@@ -1,4 +1,2 @@
-bin/Windows/*
-bin/Linux/*
-build/Windows/*
-build/Linux/*
+bin/*
+build/*
