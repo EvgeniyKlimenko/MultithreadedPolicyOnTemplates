@@ -183,8 +183,13 @@ private:
 
 using LinuxThreadPoolPolicy = AsyncWorkPolicy
 <
-    Data, PriorityQueue, LinuxLock, LinuxSynchronizer,
-    LinuxThreadPool<>, LinuxThreadNumber<DEBUG_MODE>
+    Data,
+    PriorityQueue,
+    LinuxLock,
+    ScopedLocker,
+    LinuxSynchronizer,
+    LinuxThreadPool<>,
+    LinuxThreadNumber<DEBUG_MODE>
 >;
 
 #endif // __linux__

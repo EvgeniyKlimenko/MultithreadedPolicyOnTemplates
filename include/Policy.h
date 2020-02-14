@@ -70,6 +70,7 @@ template
     typename DataType,
     template < typename > typename QueueType,
     typename LockType,
+    template < typename > typename LockerType,
     typename SyncType,
     typename ThreadPoolType,
     typename ThreadNumber
@@ -116,13 +117,11 @@ public:
             m_excp.Show();
     }
 
-    void Perform (const typename QueueType< DataType >::DataPtrType & dataPtr)
+    void Perform (const typename QueueType< DataType >::DataPtrType& dataPtr)
     {
         try
         {
-            m_lock.Lock();
-            m_queue.Enqueue(dataPtr);
-            m_lock.Unlock();
+            EnqueueAtomically(dataPtr);
             m_sync.Signal();
         }
         catch (std::exception &)
@@ -149,9 +148,7 @@ protected:
                 bool stop = m_sync.Wait();
                 if (stop) break;
 
-                m_lock.Lock();
-                typename QueueType< DataType >::DataPtrType dataPtr = m_queue.Dequeue();
-                m_lock.Unlock();
+                typename QueueType< DataType >::DataPtrType dataPtr = DequeueAtomically();
                 if (!dataPtr) continue;
                 
                 m_callback(dataPtr);
@@ -163,6 +160,18 @@ protected:
         {
             m_excp.Add(std::current_exception ());
         }
+    }
+
+    void EnqueueAtomically(const typename QueueType< DataType >::DataPtrType& dataPtr)
+    {
+        LockerType < LockType > l(m_lock);
+        m_queue.Enqueue(dataPtr);
+    }
+
+    typename QueueType< DataType >::DataPtrType DequeueAtomically()
+    {
+        LockerType < LockType > l(m_lock);
+        return m_queue.Dequeue();
     }
 };
 
@@ -246,6 +255,14 @@ protected:
     {
         return (static_cast < DerivedType & >(*this));
     }
+};
+
+template < typename LockType > class ScopedLocker
+{
+    LockType& m_lock;
+public:    
+    ScopedLocker(LockType& lock) : m_lock(lock) { m_lock.Lock(); }
+    ~ScopedLocker() { m_lock.Unlock(); }
 };
 
 template < typename DerivedType > class GenericSync

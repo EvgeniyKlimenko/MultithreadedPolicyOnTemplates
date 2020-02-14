@@ -104,8 +104,13 @@ public:
 
 using CrtThreadPoolPolicy = AsyncWorkPolicy
 <
-    Data, PriorityQueue, CrtLock, CrtSynchronizer,
-    CrtThreadPool<>, CrtThreadNumber<DEBUG_MODE>
+    Data,
+    PriorityQueue,
+    CrtLock,
+    ScopedLocker,
+    CrtSynchronizer,
+    CrtThreadPool<>,
+    CrtThreadNumber<DEBUG_MODE>
 >;
 
 #endif // __CRT_POLICY_H__

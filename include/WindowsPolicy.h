@@ -233,8 +233,13 @@ private:
 
 using WindowsThreadPoolPolicy = AsyncWorkPolicy
 <
-    Data, PriorityQueue, WindowsLock, WindowsSynchronizer,
-    WindowsThreadPool<>, WindowsThreadNumber<DEBUG_MODE>
+    Data,
+    PriorityQueue,
+    WindowsLock,
+    ScopedLocker,
+    WindowsSynchronizer,
+    WindowsThreadPool<>,
+    WindowsThreadNumber<DEBUG_MODE>
 >;
 
 
