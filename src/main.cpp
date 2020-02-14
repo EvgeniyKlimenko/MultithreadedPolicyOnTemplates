@@ -6,6 +6,19 @@
 #pragma warning(disable:4244)
 #endif // _WIN64
 
+#if defined( __linux__ )
+
+#include "LinuxPolicy.h"
+using CurrentProcessTerminationHandler = LinuxProcessTerminationHandler;
+
+#elif defined( _WIN64 )
+
+#include "WindowsPolicy.h"
+WindowsProcessTerminationHandler* WindowsProcessTerminationHandler::s_self;
+using CurrentProcessTerminationHandler = WindowsProcessTerminationHandler;
+
+#endif
+
 #if USE_CRT_POLICY==1
 
 #include "CrtPolicy.h"
@@ -15,18 +28,15 @@ using CurrentThreadPoolPolicy = CrtThreadPoolPolicy;
 
 #if defined( __linux__ )
 
-#include "LinuxPolicy.h"
 using CurrentThreadPoolPolicy = LinuxThreadPoolPolicy;
 
 #elif defined( _WIN64 )
 
-#include "WindowsPolicy.h"
 using CurrentThreadPoolPolicy = WindowsThreadPoolPolicy;
 
 #endif
 
 #endif // USE_CRT_POLICY
-
 
 template < typename DerivedType, bool Singleton >
 class AppLogic
@@ -77,6 +87,7 @@ struct Maxval<true>
 class ThreadedApp:public AppLogic < ThreadedApp, false >
 {
     CurrentThreadPoolPolicy m_policy;
+    CurrentProcessTerminationHandler m_processTerminationHandler;
 public:
 
 #if USE_SINGLETON==1
@@ -108,7 +119,7 @@ public:
             int a = (p << 2) + 1;
             int b = a - i;
 
-            m_policy.Perform(std::shared_ptr < Data >(new Data(a, b, p)));
+            m_policy.Perform(std::shared_ptr< Data >(new Data(a, b, p)));
         }
 
         std::cout << "Task in progress. Press any key to stop..." << std::endl;
@@ -126,6 +137,7 @@ private:
         {
             std::cout << "DefaultCallback - got entry - " << d->Printout () << std::endl;
         })
+    , m_processTerminationHandler(std::bind(&CurrentThreadPoolPolicy::Stop, &m_policy))
     {
         std::cout << "Creating threaded app." << std::endl;
     }

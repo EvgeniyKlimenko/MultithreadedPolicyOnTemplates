@@ -68,6 +68,28 @@ private:
     }
 };
 
+class WindowsProcessTerminationHandler final
+{
+    static WindowsProcessTerminationHandler* s_self;
+    std::function<void (void)> m_callback;
+
+    static BOOL __stdcall ConsoleCtrlCallback(ULONG code)
+    {
+        std::cerr << "Console control callback for code " << code << " raised." << std::endl;
+        s_self->m_callback();
+        return TRUE;
+    }
+
+public:
+    WindowsProcessTerminationHandler(std::function<void (void)>&& callback)
+    : m_callback(callback)
+    {
+        if (!SetConsoleCtrlHandler(&WindowsProcessTerminationHandler::ConsoleCtrlCallback, TRUE))
+            throw WindowsException(GetLastError());
+
+        WindowsProcessTerminationHandler::s_self = this;
+    }
+};
 
 template < bool Debug = false >
 struct WindowsThreadNumber

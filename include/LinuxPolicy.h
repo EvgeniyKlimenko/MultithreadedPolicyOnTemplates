@@ -7,6 +7,48 @@
 
 using LinuxException = SystemException;
 
+class LinuxProcessTerminationHandler final
+{
+    std::function<void (void)> m_callback;
+
+    static void SignalCallback(int sig, siginfo_t* info, void* param)
+    {
+        LinuxProcessTerminationHandler* handler = static_cast<LinuxProcessTerminationHandler*>(param);
+        std::cerr << "Termination callback for signal " << sig << ", process ID: " << info->si_pid << ", user ID: " << info->si_uid << "." << std::endl;
+        handler->m_callback();
+    }
+
+public:
+    LinuxProcessTerminationHandler(std::function<void (void)>&& callback)
+    : m_callback(callback)
+    {
+        struct sigaction sa;
+
+        memset(&sa, 0, sizeof(sa));
+
+        sigemptyset(&sa.sa_mask);
+        sa.sa_sigaction = &LinuxProcessTerminationHandler::SignalCallback;
+        sa.sa_flags = SA_RESTART | SA_SIGINFO;
+        
+        std::array<int, 8> signumArray; 
+
+        signumArray[0] = SIGALRM;
+        signumArray[1] = SIGHUP;
+        signumArray[2] = SIGINT;
+        signumArray[3] = SIGQUIT;
+        signumArray[4] = SIGTSTP;
+        signumArray[5] = SIGTERM;
+		signumArray[6] = SIGUSR1;
+		signumArray[7] = SIGUSR2;
+
+        std::for_each(std::begin(signumArray), std::end(signumArray), [&sa](int signum)
+        {
+            if(sigaction(signum, &sa, nullptr) < 0)
+                throw LinuxException(errno);
+        });
+    }
+};
+
 template < bool Debug = false >
 struct LinuxThreadNumber
 {
@@ -110,7 +152,7 @@ public:
     ~LinuxThreadPool()
     {
         std::for_each(std::begin(m_thl), std::end(m_thl), [](pthread_t id) { pthread_join(id, nullptr); });
-        std::cout << "Systemn based threading completed." << std::endl;
+        std::cout << "System based threading completed." << std::endl;
     }
 
     void Start()

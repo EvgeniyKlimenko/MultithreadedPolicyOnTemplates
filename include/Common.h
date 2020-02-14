@@ -6,6 +6,7 @@
 #include <sys/sysinfo.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include <signal.h>
 
 #elif defined ( _WIN64 )
 
@@ -24,8 +25,7 @@
 #include <stdexcept>
 #include <queue>
 #include <list>
-#include <tuple>
-#include <unordered_map>
+#include <array>
 #include <memory>
 #include <algorithm>
 #include <functional>

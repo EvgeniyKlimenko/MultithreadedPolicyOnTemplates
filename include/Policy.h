@@ -107,8 +107,7 @@ public:
 
     ~AsyncWorkPolicy()
     {
-        std::cout << "Stopping policy." << std::endl;
-        m_sync.Stop();
+        Stop();
     }
 
     void ShowExceptions()
@@ -130,6 +129,12 @@ public:
         {
             m_excp.Add(std::current_exception());
         }
+    }
+
+    void Stop()
+    {
+        std::cout << "Stopping policy." << std::endl;
+        m_sync.Stop();
     }
 
 protected:
